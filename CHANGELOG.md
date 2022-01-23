@@ -1,8 +1,8 @@
 # CHANGELOG
 
-## Unreleased
+## [v0.1.0](https://github.com/BobAnkh/ns3-parallel/releases/tag/v0.1.0) - 2022-01-23 09:54:21
 
-Changes unreleased.
+*No description*
 
 ### Feature
 
