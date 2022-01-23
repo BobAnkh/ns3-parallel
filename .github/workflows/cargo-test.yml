@@ -1,0 +1,100 @@
+name: Cargo Test
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+      types: [ready_for_review, opened, synchronize, reopened]
+      paths:
+        - '**.rs'
+  workflow_dispatch:
+
+jobs:
+  cargo-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install latest nightly
+        uses: actions-rs/toolchain@v1
+        with:
+            toolchain: stable
+            override: true
+            components: rustfmt, clippy
+      - name: deal with rust cache
+        uses: Swatinem/rust-cache@v1
+      - name: cargo test
+        run: |
+          cargo test --no-fail-fast --verbose
+
+  # cargo-coverage-test:
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     BACKEND_TEST_MODE: true
+  #   defaults:
+  #     run:
+  #       working-directory: backend
+
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v2
+
+  #     - name: Install latest nightly
+  #       uses: actions-rs/toolchain@v1
+  #       with:
+  #           toolchain: stable
+  #           override: true
+  #           components: rustfmt, clippy
+  #     - name: deal with rust cache
+  #       uses: Swatinem/rust-cache@v1
+  #       with:
+  #         working-directory: backend
+  #     - name: Add containers
+  #       run: docker-compose -f docker-compose-dev.yml up -d
+  #     - name: run backend consumer
+  #       run: |
+  #         cargo install cargo-tarpaulin
+  #     - name: Generate code coverage
+  #       run: |
+  #         cargo install cargo-tarpaulin
+  #         # cargo tarpaulin --all-features --no-run --skip-clean --no-fail-fast --verbose --timeout 300 --out Xml
+  #         # ./target/debug/consumer &
+  #         cargo tarpaulin --all-features --no-fail-fast --skip-clean  --verbose --timeout 300 --out Xml --exclude-files "src/bin/*" --follow-exec
+  #     - name: remove containers
+  #       run: docker-compose -f docker-compose-dev.yml down && sudo rm -rf data    
+  #     - name: Upload to codecov.io
+  #       uses: codecov/codecov-action@v2
+  #       if: ${{ success() }}
+  #       with:
+  #         directory: backend
+
+  # cargo-bench:
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     BACKEND_TEST_MODE: true
+  #   defaults:
+  #     run:
+  #       working-directory: backend
+
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v2
+
+  #     - name: Install latest nightly
+  #       uses: actions-rs/toolchain@v1
+  #       with:
+  #           toolchain: stable
+  #           override: true
+  #           components: rustfmt, clippy
+  #     - name: deal with rust cache
+  #       uses: Swatinem/rust-cache@v1
+  #       with:
+  #         working-directory: backend
+  #     - name: cargo bench
+  #       run: |
+  #           cargo bench --all-features -v --no-fail-fast
+

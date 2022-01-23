@@ -1,0 +1,22 @@
+[package]
+name = "ns3-parallel"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+description="A Multitask Parallel Concurrent Executor for ns-3 (network simulator)."
+readme = "README.md"
+homepage ="https://github.com/BobAnkh/ns3-parallel"
+repository = "https://github.com/BobAnkh/ns3-parallel"
+keywords = ["multitask", "parallel", "ns3", "network", "simulation"]
+documentation = "https://docs.rs/ns3-parallel"
+categories = ["concurrency", "network-programming", "simulation"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+toml = "0.5.8"
+tokio = { version = "1.15.0", features = ["full"] }
+serde = { version = "1.0", features = ["derive"] }
+futures = "0.3"
+pbr = "1.0.4"
+num_cpus = "1.13"

@@ -1,0 +1,9 @@
+[exp-1]
+policy = [1, 2]
+app_name = "ns3-tcp-bbr"
+sim_time = 5
+
+[exp-2]
+policy = [1, 2, 3, 4]
+app_name = "ns3-tcp-cubic"
+sim_time = 2
