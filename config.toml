@@ -7,3 +7,11 @@ sim_time = 5
 policy = [1, 2, 3, 4]
 app_name = "ns3-tcp-cubic"
 sim_time = 2
+
+[exp-3]
+policy = [1, 2, 3, 4]
+app_name = "ns3-tcp-copa"
+
+[exp-2]
+app_name = "ns3-tcp-creno"
+sim_time = 2
