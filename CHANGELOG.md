@@ -1,8 +1,9 @@
 # CHANGELOG
 
-## Unreleased
+## [v0.2.0](https://github.com/BobAnkh/ns3-parallel/releases/tag/v0.2.0) - 2022-01-25 09:24:54
 
-Changes unreleased.
+- Seperate NS3 build part, providing stderr when build fails
+- Add more document on how to use it in example
 
 ### Feature
 
