@@ -1,5 +1,22 @@
 # CHANGELOG
 
+## Unreleased
+
+Changes unreleased.
+
+### Feature
+
+- ns3:
+  - seperate ns3 build ([9ca99b4](https://github.com/BobAnkh/ns3-parallel/commit/9ca99b4c9a5e8cf175a1321dcb7df810db550bce))
+
+### Documentation
+
+- example:
+  - add more comments ([43a64ea](https://github.com/BobAnkh/ns3-parallel/commit/43a64eaa04b47e13d5d8dc1470eaabf3c1b655f2))
+
+- readme:
+  - add some badges ([71634bc](https://github.com/BobAnkh/ns3-parallel/commit/71634bcf51b571a8372e4cd3de586f9ea8d6ba85))
+
 ## [v0.1.0](https://github.com/BobAnkh/ns3-parallel/releases/tag/v0.1.0) - 2022-01-23 09:54:21
 
 *No description*
