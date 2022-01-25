@@ -9,5 +9,6 @@ pub enum Error {
     FileNotFound(String),
     InvalidTomlFormat(String),
     ExecuteFail(String),
+    BuildFail(String),
     RetryLimitExceed,
 }

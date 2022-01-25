@@ -64,6 +64,11 @@ impl<T: Default + BuildParam<P>, P: BuildCmd> Executor<T, P> {
     }
 
     pub async fn execute(&mut self) -> Result<(), Error> {
+        let ns3_dir = Path::new(&self.ns3_path);
+        println!("========== Build NS3 Program ==========");
+        build_ns3_program(ns3_dir).await?;
+        println!("Build NS3 Successfully!");
+        println!("========== Execute NS3 Tasks ==========");
         let mut tasks = FuturesUnordered::new();
         let mut params_map: HashMap<&String, Vec<P>> = self
             .configs
@@ -79,7 +84,6 @@ impl<T: Default + BuildParam<P>, P: BuildCmd> Executor<T, P> {
         let progress = spawn_blocking(move || {
             mb.listen();
         });
-        let ns3_dir = Path::new(&self.ns3_path);
         for params in params_map.drain() {
             for param in params.1 {
                 pb1.inc();
@@ -92,16 +96,10 @@ impl<T: Default + BuildParam<P>, P: BuildCmd> Executor<T, P> {
                 // If full, wait for one to finish.
                 if tasks.len() >= self.task_concurrent {
                     if let Some(t) = tasks.next().await {
-                        match t {
-                            Ok((n, t)) => {
-                                pb2.inc();
-                                if let Some(v) = self.outputs.get_mut(n) {
-                                    v.push(t);
-                                }
-                            }
-                            Err(e) => {
-                                return Err(e);
-                            }
+                        let (n, t) = t?;
+                        pb2.inc();
+                        if let Some(v) = self.outputs.get_mut(n) {
+                            v.push(t);
                         }
                     }
                 }
@@ -111,16 +109,10 @@ impl<T: Default + BuildParam<P>, P: BuildCmd> Executor<T, P> {
         // Wait for the remaining to finish.
         while let Some(t) = tasks.next().await {
             // handle response
-            match t {
-                Ok((n, t)) => {
-                    pb2.inc();
-                    if let Some(v) = self.outputs.get_mut(n) {
-                        v.push(t);
-                    }
-                }
-                Err(e) => {
-                    return Err(e);
-                }
+            let (n, t) = t?;
+            pb2.inc();
+            if let Some(v) = self.outputs.get_mut(n) {
+                v.push(t);
             }
         }
         pb2.finish();
@@ -335,4 +327,30 @@ async fn execute_ns3_program<'a, P: BuildCmd>(
             stderr,
         },
     ))
+}
+
+async fn build_ns3_program(ns3_dir: &Path) -> Result<(), Error> {
+    let waf_path = ns3_dir.join("waf");
+    let output = match Command::new(waf_path.as_os_str())
+        .arg("build")
+        .current_dir(&ns3_dir)
+        .output()
+        .await
+    {
+        Ok(output) => output,
+        Err(e) => {
+            return Err(Error::ExecuteFail(format!(
+                "Failed to execute NS3 program. Err: {:?}.",
+                e
+            )));
+        }
+    };
+    if output.status.success() {
+        Ok(())
+    } else {
+        Err(Error::BuildFail(format!(
+            "Failed to build NS3 program. Err: \n{:?}.\n",
+            String::from_utf8(output.stderr).unwrap()
+        )))
+    }
 }
