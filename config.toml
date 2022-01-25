@@ -12,6 +12,6 @@ sim_time = 2
 policy = [1, 2, 3, 4]
 app_name = "ns3-tcp-copa"
 
-[exp-2]
+[exp-4]
 app_name = "ns3-tcp-creno"
 sim_time = 2
