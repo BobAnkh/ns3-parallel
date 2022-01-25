@@ -1,5 +1,9 @@
 # ns3-parallel
 
+[![crates.io](https://img.shields.io/crates/v/ns3-parallel.svg)](https://crates.io/crates/ns3-parallel)
+[![LICENSE Apache-2.0](https://img.shields.io/github/license/BobAnkh/ns3-parallel?logo=Apache)](https://github.com/BobAnkh/ns3-parallel/[blob/main/LICENSE)
+[![docs.rs](https://img.shields.io/badge/docs.rs-ns3--parallel-blue)](https://docs.rs/ns3-parallel)
+
 A Multitask Parallel Concurrent Executor for ns-3 (network simulator).
 
 ## Usage
