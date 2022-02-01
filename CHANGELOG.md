@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## Unreleased
+
+Changes unreleased.
+
+### Refactor
+
+- exec:
+  - use more generic interface ([75bc1d2](https://github.com/BobAnkh/ns3-parallel/commit/75bc1d29f542e40433fb4ff061850b10a8045336))
+
 ## [v0.2.0](https://github.com/BobAnkh/ns3-parallel/releases/tag/v0.2.0) - 2022-01-25 09:24:54
 
 - Seperate NS3 build part, providing stderr when build fails
