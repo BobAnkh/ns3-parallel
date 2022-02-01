@@ -271,13 +271,13 @@ impl<P: BuildCmd> Task<P> {
     }
 }
 
-async fn execute_ns3_program<'a, P: BuildCmd>(
-    name: &'a str,
-    ns3_dir: &Path,
+async fn execute_ns3_program<P: BuildCmd>(
+    name: &str,
+    ns3_dir: impl AsRef<Path>,
     param: P,
     retry_limit: u32,
-) -> Result<(&'a str, Task<P>), Error> {
-    let waf_path = ns3_dir.join("waf");
+) -> Result<(&str, Task<P>), Error> {
+    let waf_path = ns3_dir.as_ref().join("waf");
     let argument = param.build_cmd();
     let mut cnt = 1;
     let mut output = match Command::new(waf_path.as_os_str())
@@ -329,8 +329,8 @@ async fn execute_ns3_program<'a, P: BuildCmd>(
     ))
 }
 
-async fn build_ns3_program(ns3_dir: &Path) -> Result<(), Error> {
-    let waf_path = ns3_dir.join("waf");
+async fn build_ns3_program(ns3_dir: impl AsRef<Path>) -> Result<(), Error> {
+    let waf_path = ns3_dir.as_ref().join("waf");
     let output = match Command::new(waf_path.as_os_str())
         .arg("build")
         .current_dir(&ns3_dir)
