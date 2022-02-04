@@ -15,7 +15,7 @@ categories = ["concurrency", "network-programming", "simulation"]
 
 [dependencies]
 toml = "0.5.8"
-tokio = { version = "1.15.0", features = ["full"] }
+tokio = { version = "1.16.1", features = ["full"] }
 serde = { version = "1.0", features = ["derive"] }
 futures = "0.3"
 pbr = "1.0.4"
