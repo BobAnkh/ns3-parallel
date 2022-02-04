@@ -9,6 +9,7 @@ on:
       types: [ready_for_review, opened, synchronize, reopened]
       paths:
         - '**.rs'
+        - '**/Cargo.toml'
   workflow_dispatch:
 
 jobs:
