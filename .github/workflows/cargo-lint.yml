@@ -31,8 +31,6 @@ jobs:
       # as it is set as an "override" for current directory
       - name: deal with rust cache
         uses: Swatinem/rust-cache@v1
-        with:
-          working-directory: backend
     
       - name: cargo check
         run: cargo check --all-targets --workspace
@@ -77,8 +75,7 @@ jobs:
       # as it is set as an "override" for current directory
       - name: deal with rust cache
         uses: Swatinem/rust-cache@v1
-        with:
-          working-directory: backend
+
      # temporarily change to a self-maintained workflow
      # see https://github.com/actions-rs/clippy-check/pull/158
       - name: cargo clippy
@@ -105,8 +102,6 @@ jobs:
       # as it is set as an "override" for current directory
       - name: deal with rust cache
         uses: Swatinem/rust-cache@v1
-        with:
-          working-directory: backend
           
       - name: cargo fmt
         run: cargo fmt --all -- --check
