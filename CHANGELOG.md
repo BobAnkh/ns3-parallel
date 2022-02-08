@@ -4,6 +4,11 @@
 
 Changes unreleased.
 
+### Documentation
+
+- readme:
+  - update badges ([d2da5d4](https://github.com/BobAnkh/ns3-parallel/commit/d2da5d4730d97a4174513522b7753eca78d3e08a))
+
 ### Refactor
 
 - exec:
