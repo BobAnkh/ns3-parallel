@@ -1,8 +1,8 @@
 # CHANGELOG
 
-## Unreleased
+## [v0.2.1](https://github.com/BobAnkh/ns3-parallel/releases/tag/v0.2.1) - 2022-02-08 08:51:25
 
-Changes unreleased.
+- refactor inner function for generalizability
 
 ### Documentation
 
