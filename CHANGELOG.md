@@ -7,6 +7,7 @@ Changes unreleased.
 ### Documentation
 
 - readme:
+  - update badges ([7ba04cc](https://github.com/BobAnkh/ns3-parallel/commit/7ba04ccd7bff1bfdbaf511fa08494dfd223b2c6a))
   - update badges ([d2da5d4](https://github.com/BobAnkh/ns3-parallel/commit/d2da5d4730d97a4174513522b7753eca78d3e08a))
 
 ### Refactor
