@@ -1,6 +1,6 @@
 [package]
 name = "ns3-parallel"
-version = "0.2.1"
+version = "0.2.2"
 edition = "2021"
 license = "Apache-2.0"
 description="A Multitask Parallel Concurrent Executor for ns-3 (network simulator)."
