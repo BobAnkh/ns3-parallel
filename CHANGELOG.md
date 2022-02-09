@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## Unreleased
+
+Changes unreleased.
+
+### Performance Improvements
+
+- exec:
+  - remove build time for per run ([4666b76](https://github.com/BobAnkh/ns3-parallel/commit/4666b76be5c5dad2bfc7abdc34d6f88027c408c7))
+
 ## [v0.2.1](https://github.com/BobAnkh/ns3-parallel/releases/tag/v0.2.1) - 2022-02-08 08:51:25
 
 - refactor inner function for generalizability
