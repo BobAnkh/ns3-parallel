@@ -281,7 +281,7 @@ async fn execute_ns3_program<P: BuildCmd>(
     let argument = param.build_cmd();
     let mut cnt = 1;
     let mut output = match Command::new(waf_path.as_os_str())
-        .arg("--run")
+        .arg("--run-no-build")
         .arg(&argument)
         .current_dir(&ns3_dir)
         .output()
@@ -301,7 +301,7 @@ async fn execute_ns3_program<P: BuildCmd>(
             return Err(Error::RetryLimitExceed);
         }
         output = match Command::new(waf_path.as_os_str())
-            .arg("--run")
+            .arg("--run-no-build")
             .arg(&argument)
             .current_dir(&ns3_dir)
             .output()
