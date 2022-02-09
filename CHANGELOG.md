@@ -1,8 +1,8 @@
 # CHANGELOG
 
-## Unreleased
+## [v0.2.2](https://github.com/BobAnkh/ns3-parallel/releases/tag/v0.2.2) - 2022-02-09 09:55:21
 
-Changes unreleased.
+Improve per run performance by replace `--run` with `--run-no-build` to avoid build time.
 
 ### Performance Improvements
 
