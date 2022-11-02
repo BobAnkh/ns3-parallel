@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## [v0.2.3](https://github.com/BobAnkh/ns3-parallel/releases/tag/v0.2.3) - 2022-11-02 13:30:08
+
+Refactor code to support multiple config format: toml, ron, json, yaml.
+
+### Feature
+
+- config:
+  - support multiple config format ([6b8f95c](https://github.com/BobAnkh/ns3-parallel/commit/6b8f95c900325f989191430580f5ff1fe4890b5c))
+
+### Documentation
+
+- readme:
+  - update contributors ([5c4cdfb](https://github.com/BobAnkh/ns3-parallel/commit/5c4cdfb619be1d89ab22e7c39027571ff064adfb))
+
 ## [v0.2.2](https://github.com/BobAnkh/ns3-parallel/releases/tag/v0.2.2) - 2022-02-09 09:55:21
 
 Improve per run performance by replace `--run` with `--run-no-build` to avoid build time.
