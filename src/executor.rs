@@ -1,8 +1,9 @@
 use futures::stream::FuturesUnordered;
 use futures::StreamExt;
 use pbr::MultiBar;
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::process::Output;
 use tokio::process::Command;
 use tokio::task::spawn_blocking;
@@ -12,9 +13,21 @@ use crate::error::Error;
 
 const DEFAULT_RETRY_LIMIT: i32 = 5;
 
+/// Used for ExecutorBuilder.
+///
+/// Specify the format of your config file. Default to `ConfigFormat::Toml`
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub enum ConfigFormat {
+    Ron,
+    Json,
+    Toml,
+    Yaml,
+}
+
 #[derive(Debug, Clone)]
 pub struct Executor<T: Default + BuildParam<P>, P: BuildCmd> {
     config_path: String,
+    config_format: ConfigFormat,
     ns3_path: String,
     task_concurrent: usize,
     retry_limit: u32,
@@ -25,6 +38,7 @@ pub struct Executor<T: Default + BuildParam<P>, P: BuildCmd> {
 #[derive(Debug, Clone)]
 pub struct ExecutorBuilder {
     pub config_path: Option<String>,
+    pub config_format: Option<ConfigFormat>,
     pub ns3_path: Option<String>,
     pub task_concurrent: Option<usize>,
     pub retry_limit: Option<u32>,
@@ -41,6 +55,10 @@ pub struct Task<P: BuildCmd> {
 impl<T: Default + BuildParam<P>, P: BuildCmd> Executor<T, P> {
     pub fn get_config_path(&self) -> &str {
         &self.config_path
+    }
+
+    pub fn get_config_format(&self) -> &ConfigFormat {
+        &self.config_format
     }
 
     pub fn get_ns3_path(&self) -> &str {
@@ -121,6 +139,56 @@ impl<T: Default + BuildParam<P>, P: BuildCmd> Executor<T, P> {
     }
 }
 
+fn check_config_file(config_path: &String, ext: &ConfigFormat) -> Result<PathBuf, Error> {
+    let config_file_path = match Path::new(&config_path).canonicalize() {
+        Ok(path) => path,
+        Err(e) => {
+            return Err(Error::FileNotFound(format!(
+                "Can not locate config file: {:?}.",
+                e
+            )));
+        }
+    };
+    match config_file_path.extension() {
+        Some(t) => match ext {
+            ConfigFormat::Ron => {
+                if t != "ron" {
+                    return Err(Error::InvalidConfig(
+                        "Config file must be a ron file.".to_string(),
+                    ));
+                }
+            }
+            ConfigFormat::Json => {
+                if t != "json" {
+                    return Err(Error::InvalidConfig(
+                        "Config file must be a json file.".to_string(),
+                    ));
+                }
+            }
+            ConfigFormat::Toml => {
+                if t != "toml" {
+                    return Err(Error::InvalidConfig(
+                        "Config file must be a toml file.".to_string(),
+                    ));
+                }
+            }
+            ConfigFormat::Yaml => {
+                if t != "yaml" {
+                    return Err(Error::InvalidConfig(
+                        "Config file must be a yaml file.".to_string(),
+                    ));
+                }
+            }
+        },
+        None => {
+            return Err(Error::InvalidConfig(
+                "Config file must have a valid file extension.".to_string(),
+            ));
+        }
+    }
+    Ok(config_file_path)
+}
+
 impl Default for ExecutorBuilder {
     fn default() -> Self {
         Self::new()
@@ -131,6 +199,7 @@ impl ExecutorBuilder {
     pub fn new() -> Self {
         Self {
             config_path: None,
+            config_format: None,
             ns3_path: None,
             task_concurrent: None,
             retry_limit: None,
@@ -139,6 +208,11 @@ impl ExecutorBuilder {
 
     pub fn config_path(mut self, config_path: &str) -> Self {
         self.config_path = Some(config_path.to_string());
+        self
+    }
+
+    pub fn config_format(mut self, config_format: ConfigFormat) -> Self {
+        self.config_format = Some(config_format);
         self
     }
 
@@ -157,41 +231,21 @@ impl ExecutorBuilder {
         self
     }
 
-    pub fn build<'de, T: Default + BuildParam<P> + serde::de::Deserialize<'de>, P: BuildCmd>(
+    pub fn build<T: Default + BuildParam<P> + serde::de::DeserializeOwned, P: BuildCmd>(
         self,
     ) -> Result<Executor<T, P>, Error> {
-        let mut config_path = self
-            .config_path
-            .unwrap_or_else(|| "config.toml".to_string());
+        let config_format = self.config_format.unwrap_or(ConfigFormat::Toml);
+        let mut config_path = self.config_path.unwrap_or_else(|| match &config_format {
+            ConfigFormat::Ron => "config.ron".to_string(),
+            ConfigFormat::Toml => "config.toml".to_string(),
+            ConfigFormat::Json => "config.json".to_string(),
+            ConfigFormat::Yaml => "config.yaml".to_string(),
+        });
         let mut ns3_path = self.ns3_path.unwrap_or_else(|| "/".to_string());
         let task_concurrent = self.task_concurrent.unwrap_or_else(num_cpus::get);
-        let retry_limit = self
-            .retry_limit
-            .unwrap_or_else(|| DEFAULT_RETRY_LIMIT as u32);
+        let retry_limit = self.retry_limit.unwrap_or(DEFAULT_RETRY_LIMIT as u32);
         // Check config file
-        let config_file_path = match Path::new(&config_path).canonicalize() {
-            Ok(path) => path,
-            Err(e) => {
-                return Err(Error::FileNotFound(format!(
-                    "Can not locate config file: {:?}.",
-                    e
-                )));
-            }
-        };
-        match config_file_path.extension() {
-            Some(t) => {
-                if t != "toml" {
-                    return Err(Error::InvalidConfig(
-                        "Config file must be a toml file.".to_string(),
-                    ));
-                }
-            }
-            None => {
-                return Err(Error::InvalidConfig(
-                    "Config file must have a valid file extension.".to_string(),
-                ));
-            }
-        }
+        let config_file_path = check_config_file(&config_path, &config_format)?;
         config_path = config_file_path.display().to_string();
         // check ns3 directory
         let ns3_dir_path = match Path::new(&ns3_path).join("waf").canonicalize() {
@@ -204,29 +258,36 @@ impl ExecutorBuilder {
             }
         };
         ns3_path = ns3_dir_path.parent().unwrap().display().to_string();
-        let configuration = match std::fs::read_to_string(config_file_path) {
-            Ok(c) => c,
-            Err(e) => {
-                return Err(Error::InvalidConfig(format!(
-                    "Config file cannot be opened at {}. Err: {:?}.",
-                    &config_path, e
-                )))
+        let configs: HashMap<String, T> = match config_format {
+            ConfigFormat::Ron => {
+                let f = std::fs::File::open(config_file_path)?;
+                ron::de::from_reader(f)?
+            }
+            ConfigFormat::Json => {
+                let f = std::fs::File::open(config_file_path)?;
+                serde_json::from_reader(f)?
+            }
+            ConfigFormat::Yaml => {
+                let f = std::fs::File::open(config_file_path)?;
+                serde_yaml::from_reader(f)?
+            }
+            ConfigFormat::Toml => {
+                let configuration = std::fs::read_to_string(config_file_path)?;
+                let configs: toml::value::Table = match toml::from_str(&configuration) {
+                    Ok(t) => t,
+                    Err(e) => {
+                        return Err(Error::InvalidConfigFormat(format!(
+                            "Config file is not a valid toml file. Err: {:?}.",
+                            e
+                        )));
+                    }
+                };
+                configs
+                    .iter()
+                    .map(|(k, v)| (k.to_owned(), v.to_owned().try_into().unwrap()))
+                    .collect()
             }
         };
-        let configs: toml::value::Table = match toml::from_str(&configuration) {
-            Ok(t) => t,
-            Err(e) => {
-                return Err(Error::InvalidTomlFormat(format!(
-                    "Config file is not a valid toml file. Err: {:?}.",
-                    e
-                )));
-            }
-        };
-
-        let configs: HashMap<String, T> = configs
-            .iter()
-            .map(|(k, v)| (k.to_owned(), v.to_owned().try_into().unwrap()))
-            .collect();
         let outputs: HashMap<String, Vec<Task<P>>> = configs
             .iter()
             .map(|(k, _)| (k.to_owned(), vec![]))
@@ -234,6 +295,7 @@ impl ExecutorBuilder {
 
         Ok(Executor {
             config_path,
+            config_format,
             ns3_path,
             task_concurrent,
             retry_limit,

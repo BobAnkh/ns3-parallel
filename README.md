@@ -17,6 +17,8 @@ Examples see `examples/simple.rs`.
 
 To run the example, you can first execute the script `setup-ns3.sh` then execute `cargo run --example simple` in the root directory.
 
+Currently support 4 config file formats: toml, ron, json, yaml. Example config files can see `config.toml` and `config.ron` under root. **Welcome contributions for any new config format**.
+
 ## Maintainer
 
 [@BobAnkh](https://github.com/BobAnkh)

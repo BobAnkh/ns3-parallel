@@ -1,4 +1,4 @@
-use ns3_parallel::{BuildCmd, BuildParam, Executor, ExecutorBuilder};
+use ns3_parallel::{executor::ConfigFormat, BuildCmd, BuildParam, Executor, ExecutorBuilder};
 use serde::{Deserialize, Serialize};
 
 // This is what you want to read from your configuration file.
@@ -62,10 +62,36 @@ impl BuildCmd for MyParam {
 
 #[tokio::main]
 async fn main() {
+    // ========== Use toml format as the config file ==========
     // Use ExecutorBuilder to build your executor.
     let mut exe: Executor<MyConfig, MyParam> = ExecutorBuilder::new()
         .config_path("config.toml")
+        .config_format(ConfigFormat::Toml)
         .ns3_path("ns-allinone-3.33/ns-3.33/")
+        .build()
+        .unwrap();
+
+    // Run your executor.
+    let _ = exe.execute().await.unwrap();
+
+    // Collect your results.
+    let outputs = exe.get_outputs().to_owned();
+
+    // Here I just print all the results, you can do whatever you want with them here.
+    for (_, output) in outputs {
+        for task in output {
+            println!("{}", task.stderr);
+        }
+    }
+
+    // ========== Use ron format as the config file ==========
+    // Use ExecutorBuilder to build your executor.
+    let mut exe: Executor<MyConfig, MyParam> = ExecutorBuilder::new()
+        .config_path("config.ron")
+        .config_format(ConfigFormat::Ron)
+        .ns3_path("ns-allinone-3.33/ns-3.33/")
+        .task_concurrent(4)
+        .retry_limit(2)
         .build()
         .unwrap();
 
