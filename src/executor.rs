@@ -93,7 +93,7 @@ impl<T: Default + BuildParam<P>, P: BuildCmd> Executor<T, P> {
             .iter()
             .map(|(k, v)| (k, v.build_param()))
             .collect();
-        let total_count = params_map.iter().map(|(_, v)| v.len()).sum::<usize>() as u64;
+        let total_count = params_map.values().map(|v| v.len()).sum::<usize>() as u64;
         let mb = MultiBar::new();
         mb.println("Launch NS3 Tasks: ");
         let mut pb1 = mb.create_bar(total_count);
@@ -288,10 +288,8 @@ impl ExecutorBuilder {
                     .collect()
             }
         };
-        let outputs: HashMap<String, Vec<Task<P>>> = configs
-            .iter()
-            .map(|(k, _)| (k.to_owned(), vec![]))
-            .collect();
+        let outputs: HashMap<String, Vec<Task<P>>> =
+            configs.keys().map(|k| (k.to_owned(), vec![])).collect();
 
         Ok(Executor {
             config_path,
