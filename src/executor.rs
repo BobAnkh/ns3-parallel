@@ -144,8 +144,7 @@ fn check_config_file(config_path: &String, ext: &ConfigFormat) -> Result<PathBuf
         Ok(path) => path,
         Err(e) => {
             return Err(Error::FileNotFound(format!(
-                "Can not locate config file: {:?}.",
-                e
+                "Can not locate config file: {e:?}."
             )));
         }
     };
@@ -252,8 +251,7 @@ impl ExecutorBuilder {
             Ok(path) => path,
             Err(e) => {
                 return Err(Error::FileNotFound(format!(
-                    "Can not locate ns3 dir: {:?}.",
-                    e
+                    "Can not locate ns3 dir: {e:?}."
                 )));
             }
         };
@@ -277,8 +275,7 @@ impl ExecutorBuilder {
                     Ok(t) => t,
                     Err(e) => {
                         return Err(Error::InvalidConfigFormat(format!(
-                            "Config file is not a valid toml file. Err: {:?}.",
-                            e
+                            "Config file is not a valid toml file. Err: {e:?}."
                         )));
                     }
                 };
@@ -350,8 +347,7 @@ async fn execute_ns3_program<P: BuildCmd>(
         Ok(output) => output,
         Err(e) => {
             return Err(Error::ExecuteFail(format!(
-                "Failed to execute NS3 program. Err: {:?}.",
-                e
+                "Failed to execute NS3 program. Err: {e:?}."
             )));
         }
     };
@@ -370,8 +366,7 @@ async fn execute_ns3_program<P: BuildCmd>(
             Ok(output) => output,
             Err(e) => {
                 return Err(Error::ExecuteFail(format!(
-                    "Failed to execute NS3 program. Err: {:?}.",
-                    e
+                    "Failed to execute NS3 program. Err: {e:?}."
                 )));
             }
         };
@@ -400,8 +395,7 @@ async fn build_ns3_program(ns3_dir: impl AsRef<Path>) -> Result<(), Error> {
         Ok(output) => output,
         Err(e) => {
             return Err(Error::ExecuteFail(format!(
-                "Failed to execute NS3 program. Err: {:?}.",
-                e
+                "Failed to execute NS3 program. Err: {e:?}."
             )));
         }
     };

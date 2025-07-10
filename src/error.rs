@@ -22,30 +22,30 @@ pub enum Error {
 
 impl From<io::Error> for Error {
     fn from(e: io::Error) -> Self {
-        Error::IoError(format!("{:?}", e))
+        Error::IoError(format!("{e:?}"))
     }
 }
 
 impl From<JoinError> for Error {
     fn from(e: JoinError) -> Self {
-        Error::JoinError(format!("{:?}", e))
+        Error::JoinError(format!("{e:?}"))
     }
 }
 
 impl From<SpannedError> for Error {
     fn from(e: SpannedError) -> Self {
-        Error::InvalidConfigFormat(format!("{:?}", e))
+        Error::InvalidConfigFormat(format!("{e:?}"))
     }
 }
 
 impl From<serde_json::Error> for Error {
     fn from(e: serde_json::Error) -> Self {
-        Error::InvalidConfigFormat(format!("{:?}", e))
+        Error::InvalidConfigFormat(format!("{e:?}"))
     }
 }
 
 impl From<serde_yaml::Error> for Error {
     fn from(e: serde_yaml::Error) -> Self {
-        Error::InvalidConfigFormat(format!("{:?}", e))
+        Error::InvalidConfigFormat(format!("{e:?}"))
     }
 }
