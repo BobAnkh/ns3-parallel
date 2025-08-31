@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## [v0.2.3](https://github.com/BobAnkh/ns3-parallel/releases/tag/v0.2.3) - 2022-11-02 13:30:08
+## [v0.2.3](https://github.com/BobAnkh/ns3-parallel/releases/tag/v0.2.3) - 2022-11-02 13:30:08+00:00
 
 Refactor code to support multiple config format: toml, ron, json, yaml.
 
